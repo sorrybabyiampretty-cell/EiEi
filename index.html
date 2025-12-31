@@ -3,276 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello Kitty Happy New Year 🎀</title>
+    <title>EIEI</title>
     <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --kitty-pink: #ffb7c5;
-            --kitty-red: #ff4d6d;
-            --soft-white: #ffffff;
+            --sweet-pink: #fbcce1;
+            --pastel-pink: #ffebf2;
+            --dark-pink: #ff8fa3;
+            --white: #ffffff;
         }
 
         body {
             font-family: 'Mali', cursive;
-            background-color: #fff9fb;
-            background-image: radial-gradient(#ffd1dc 10%, transparent 11%), radial-gradient(#ffd1dc 10%, transparent 11%);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
+            background-color: var(--pastel-pink);
+            background-image: radial-gradient(var(--sweet-pink) 10%, transparent 10%);
+            background-size: 30px 30px;
             margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            color: #4a4a4a;
+            overflow: hidden;
         }
 
-        /* หน้าจอปุ่มกดเริ่ม */
-        #intro-screen {
+        /* 1. หน้าแรก Intro */
+        #screen-intro {
             position: fixed;
             inset: 0;
-            background: #fff;
-            z-index: 100;
+            background: linear-gradient(180deg, var(--white) 0%, var(--pastel-pink) 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: 0.8s ease-in-out;
+            z-index: 100;
         }
 
-        .kitty-logo {
-            width: 150px; /* เพิ่มขนาดรูปนิดหน่อย */
-            margin-bottom: 20px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
-        }
-
-        .start-btn {
-            background: var(--kitty-pink);
-            color: white;
-            border: 5px solid #fff;
-            padding: 12px 35px;
-            font-size: 1.4rem;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 183, 197, 0.5);
-            font-family: 'Mali';
-            transition: 0.3s;
-        }
-
-        .start-btn:hover { transform: scale(1.05); background: var(--kitty-red); }
-
-        /* หน้าเกม */
-        #game-screen {
+        /* 2. หน้าจอนับถอยหลัง & พลุ (เพิ่มพื้นหลังแล้ว) */
+        #screen-celebrate {
+            position: fixed;
+            inset: 0;
+            /* พื้นหลังตอนจุดพลุ: สีชมพูฟุ้งๆ */
+            background: radial-gradient(circle, #fff0f5 0%, #fbcce1 100%);
             display: none;
             flex-direction: column;
             align-items: center;
-            animation: fadeIn 1s;
+            justify-content: center;
+            z-index: 200;
+            text-align: center;
         }
 
-        .title-text {
-            color: var(--kitty-red);
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            background: white;
-            padding: 5px 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        /* 3. หน้าเกม */
+        #screen-game {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 50;
         }
 
-        /* กระดานจิ๊กซอว์ */
-        #puzzle-board {
+        .btn-main {
+            background: var(--dark-pink);
+            color: white;
+            border: 4px solid white;
+            padding: 15px 45px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Mali';
+            box-shadow: 0 8px 20px rgba(255, 143, 163, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn-main:hover { transform: scale(1.05); background: var(--sweet-pink); color: var(--dark-pink); }
+
+        .puzzle-board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 6px;
+            gap: 10px;
             background: white;
-            padding: 12px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(255, 183, 197, 0.3);
-            border: 3px solid var(--kitty-pink);
+            padding: 15px;
+            border-radius: 25px;
+            border: 5px solid var(--sweet-pink);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
         .piece {
             width: 100px;
             height: 100px;
-            background-image: url('https://img2.pic.in.th/image3d66b86186de5dce.png'); /* รูปแฟนของคุณ */
+            background-image: url('https://img2.pic.in.th/IMG_7151.jpeg');
             background-size: 300px 300px;
-            cursor: pointer;
             border-radius: 12px;
-            border: 2px solid #f0f0f0;
-            transition: 0.2s;
+            cursor: pointer;
             position: relative;
+            box-sizing: border-box;
+            border: 1px solid #f0f0f0;
         }
 
         .piece::after {
             content: attr(data-num);
             position: absolute;
-            top: 5px;
-            left: 5px;
-            font-size: 10px;
-            background: rgba(255,255,255,0.7);
-            width: 18px;
-            height: 18px;
+            inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            color: var(--kitty-red);
+            font-size: 32px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 143, 163, 0.2);
         }
 
-        .piece.active {
-            border-color: var(--kitty-red);
-            box-shadow: 0 0 15px var(--kitty-red);
-            transform: scale(0.92);
-        }
+        .piece.selected { border: 4px solid var(--dark-pink); transform: scale(0.95); }
 
-        /* กล่องข้อความสุดท้าย */
-        #surprise-modal {
+        /* กล่องความในใจ */
+        #modal-surprise {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 30px;
-            border-radius: 35px;
             width: 85%;
-            max-width: 420px;
-            z-index: 200;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-            border: 6px solid var(--kitty-pink);
-            text-align: left;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .bow-icon {
-            display: block;
+            max-width: 400px;
+            padding: 35px 25px;
+            border-radius: 40px;
+            border: 6px solid var(--sweet-pink);
             text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            z-index: 300;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* ตัวเลขถอยหลัง */
+        .count-text { 
+            font-size: 8rem; 
+            color: var(--dark-pink); 
+            font-weight: bold; 
+            text-shadow: 2px 2px 15px rgba(255, 255, 255, 0.8);
+        }
 
+        /* ข้อความ Happy New Year ตรงกลางหน้าพลุ */
+        #hny-display-text {
+            display: none;
+            font-size: 3rem;
+            color: var(--dark-pink);
+            font-weight: bold;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div id="intro-screen">
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Hello_kitty_character_portrait.png/220px-Hello_kitty_character_portrait.png" class="kitty-logo">
-        <h1 style="color: #ff4d6d; margin-top: 0;">Happy New Year 💖</h1>
-        <button class="start-btn" onclick="startGame()">เปิดของขวัญอ้วน 🎀</button>
+    <div id="screen-intro">
+        <img src="https://media1.tenor.com/m/dIl1AZR3NtIAAAAC/%E5%85%83%E5%A4%A7%E9%8A%80%E8%A1%8C%E5%BC%B5%E9%9B%85%E5%A9%B7.gif" alt="Hello Kitty" style="width: 150px; margin-bottom: 20px;">
+        <h1 style="color: var(--dark-pink); margin-top: 0;">Happy New Year ✨</h1>
+        <button class="btn-main" onclick="startHNY()">รับของขวัญจากอ้วน 🎀</button>
     </div>
 
-    <div id="game-screen">
-        <div class="title-text">ต่อรูปเราให้ครบนะ 🐱</div>
-        <div id="puzzle-board"></div>
-        <p style="color: #888; font-size: 0.8rem; margin-top: 15px;">เรียงเลข 1-9 ให้ถูกต้องนะค๊าบ</p>
-    </div>
-
-    <div id="surprise-modal">
-        <span class="bow-icon">🎀</span>
-        <h2 style="color: var(--kitty-red); text-align: center; margin-top: 0;">Happy New Year นะที่รัก!</h2>
-        <p>ได้อยู่ข้ามปีกับอ้วนเป็นรอบที่ 2 แล้วว อยากมีอ้วนตลอดไปเลยนะะะ รักเธอมากขึ้นทุกวันเลยย อยากพาไปหาไรทำกัน อยากพาไปกินไรอร่อยๆเย้อเย้อ อยากไปถ่ายรูปกับอ้วนอีก อยากไปเจอเธอบ่อยๆ ขอโทษที่บางครั้งเค้าทำตัวไม่น่ารัก ทำตัวไม่ดี แต่ก็ไม่อยากให้อ้วนเบื่อกันเลยยย รักนะอ้วน รักมากเลยด้วยยย 🥺👩🏻‍❤️‍💋‍👨🏽♥️😘</p>
-        <div style="text-align: center; margin-top: 20px;">
-             <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Hello_kitty_character_portrait.png/220px-Hello_kitty_character_portrait.png" width="60">
+    <div id="screen-celebrate">
+        <div id="countdown-num" class="count-text">3</div>
+        <div id="hny-display-text">
+            <h2 style="margin:0;">Happy New Year!</h2>
+            <p style="font-size: 1.5rem; margin:0;">2026</p>
         </div>
     </div>
 
-    <script>
-        let firstSelection = null;
+    <div id="screen-game">
+        <div style="background:white; color:var(--dark-pink); padding:10px 30px; border-radius:30px; margin-bottom:25px; font-weight:bold; border: 2px solid var(--sweet-pink);">
+            เรียงรูปอ้วนให้ครบนะค๊าบ 
+        </div>
+        <div id="board" class="puzzle-board"></div>
+        <p style="color: var(--dark-pink); margin-top:15px; font-weight:bold;">เรียงเลข 1 ถึง 9 ให้ถูกตำแหน่งนะ!</p>
+    </div>
 
-        function startGame() {
-            document.getElementById('intro-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('intro-screen').style.display = 'none';
-                document.getElementById('game-screen').style.display = 'flex';
-            }, 800);
+    <div id="modal-surprise">
+        <img src="https://img2.pic.in.th/IMG_7151.jpeg" width="80" style="margin-bottom:15px;">
+        <h2 style="color: var(--dark-pink);">ถึง... อ้วนของเค้า 💖</h2>
+        <p style="text-align: left; line-height: 1.8; color: #5d4037; font-size: 0.95rem;">
+           ได้อยู่ข้ามปีกับอ้วนเป็นรอบที่ 2 แล้วว อยากมีอ้วนตลอดไปเลยนะะะ รักเธอมากขึ้นทุกวันเลยย อยากพาไปหาไรทำกัน อยากพาไปกินไรอร่อยๆเย้อเย้อ อยากไปถ่ายรูปกับอ้วนอีก อยากไปเจอเธอบ่อยๆ ขอโทษที่บางครั้งเค้าทำตัวไม่น่ารัก ทำตัวไม่ดี แต่ก็ไม่อยากให้อ้วนเบื่อกันเลยยย รักนะอ้วน รักมากเลยด้วยยย 🥺👩🏻‍❤️‍💋‍👨🏽♥️😘
+        </p>
+        <button class="btn-main" style="font-size: 1.1rem; padding: 10px 35px;" onclick="location.reload()">เล่นใหม่อีกรอบ 🎀</button>
+    </div>
+
+    <script>
+        let firstPiece = null;
+
+        function startHNY() {
+            document.getElementById('screen-intro').style.display = 'none';
+            const screen = document.getElementById('screen-celebrate');
+            const numText = document.getElementById('countdown-num');
+            const hnyDisplay = document.getElementById('hny-display-text');
+            screen.style.display = 'flex';
+
+            let count = 3;
+            let timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    numText.innerText = count;
+                } else if (count === 0) {
+                    // เมื่อนับถึง 0 ให้ซ่อนเลขแล้วโชว์ข้อความ HNY พร้อมจุดพลุ
+                    numText.style.display = 'none';
+                    hnyDisplay.style.display = 'block';
+                    launchFireworks(); 
+                } else {
+                    clearInterval(timer);
+                    screen.style.display = 'none';
+                    document.getElementById('screen-game').style.display = 'flex';
+                    initPuzzle();
+                }
+            }, 1000);
         }
 
-        function createPuzzle() {
-            const board = document.getElementById('puzzle-board');
-            let indices = [...Array(9).keys()];
-            
-            // Shuffle
-            do {
-                indices.sort(() => Math.random() - 0.5);
-            } while (indices.every((val, i) => val === i));
+        function launchFireworks() {
+            // จุดพลุ 3.5 วินาที
+            const end = Date.now() + 3500;
+            const colors = ['#ff8fa3', '#fbcce1', '#ffffff', '#ffd700'];
 
-            indices.forEach((val, i) => {
-                const piece = document.createElement('div');
-                piece.className = 'piece';
-                piece.dataset.correctIdx = val;
-                piece.dataset.num = val + 1; // แสดงเลข 1-9 ในช่อง
+            (function frame() {
+                confetti({
+                    particleCount: 10,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.7 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 10,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.7 },
+                    colors: colors
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
 
-                // Position background
+        function initPuzzle() {
+            const board = document.getElementById('board');
+            let ids = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            do { ids.sort(() => Math.random() - 0.5); } while (ids.every((v, i) => v === i));
+
+            board.innerHTML = '';
+            ids.forEach((val, i) => {
+                const el = document.createElement('div');
+                el.className = 'piece';
+                el.dataset.correctIdx = val;
+                el.dataset.num = val + 1;
+                
                 const x = (val % 3) * 100;
                 const y = Math.floor(val / 3) * 100;
-                piece.style.backgroundPosition = `-${x}px -${y}px`;
+                el.style.backgroundPosition = `-${x}px -${y}px`;
 
-                piece.onclick = function() {
-                    if (firstSelection) {
-                        if (firstSelection === this) {
-                            this.classList.remove('active');
-                            firstSelection = null;
+                el.onclick = () => {
+                    if (!firstPiece) {
+                        firstPiece = el;
+                        el.classList.add('selected');
+                    } else {
+                        if (firstPiece === el) {
+                            el.classList.remove('selected');
+                            firstPiece = null;
                             return;
                         }
-                        // Swap
-                        swap(this, firstSelection);
-                        firstSelection.classList.remove('active');
-                        firstSelection = null;
+                        swap(el, firstPiece);
+                        firstPiece.classList.remove('selected');
+                        firstPiece = null;
                         checkWin();
-                    } else {
-                        firstSelection = this;
-                        this.classList.add('active');
                     }
                 };
-                board.appendChild(piece);
+                board.appendChild(el);
             });
         }
 
         function swap(p1, p2) {
-            const tempBg = p1.style.backgroundPosition;
-            const tempIdx = p1.dataset.correctIdx;
-            const tempNum = p1.dataset.num;
+            const tPos = p1.style.backgroundPosition;
+            const tIdx = p1.dataset.correctIdx;
+            const tNum = p1.dataset.num;
 
             p1.style.backgroundPosition = p2.style.backgroundPosition;
             p1.dataset.correctIdx = p2.dataset.correctIdx;
             p1.dataset.num = p2.dataset.num;
 
-            p2.style.backgroundPosition = tempBg;
-            p2.dataset.correctIdx = tempIdx;
-            p2.dataset.num = tempNum;
+            p2.style.backgroundPosition = tPos;
+            p2.dataset.correctIdx = tIdx;
+            p2.dataset.num = tNum;
         }
 
         function checkWin() {
             const pieces = document.querySelectorAll('.piece');
-            let isCorrect = true;
-            pieces.forEach((p, i) => {
-                if (parseInt(p.dataset.correctIdx) !== i) isCorrect = false;
-            });
+            let isWin = Array.from(pieces).every((p, i) => parseInt(p.dataset.correctIdx) === i);
 
-            if (isCorrect) {
+            if (isWin) {
                 setTimeout(() => {
-                    document.getElementById('game-screen').style.opacity = '0.3';
-                    document.getElementById('surprise-modal').style.display = 'block';
-                    fireConfetti();
-                }, 500);
+                    document.getElementById('screen-game').style.opacity = '0.3';
+                    document.getElementById('modal-surprise').style.display = 'block';
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#ff8fa3', '#fbcce1'] });
+                }, 600);
             }
         }
-
-        function fireConfetti() {
-            var end = Date.now() + (5 * 1000);
-            var colors = ['#ffb7c5', '#ff4d6d', '#ffffff'];
-            (function frame() {
-                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
-                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
-        }
-
-        createPuzzle();
     </script>
 </body>
 </html>
